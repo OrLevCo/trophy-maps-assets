@@ -1,0 +1,15 @@
+{
+  "slug": "39w37",
+  "left": "39",
+  "sep": "—W—",
+  "right": "37",
+  "tokens": {
+    "ink": "#1a1814",
+    "accent": "#c79962",
+    "paper": "#f5f1e8"
+  },
+  "fonts": {
+    "display": { "family": "fraunces", "weight": 500 },
+    "sep":     { "family": "inter",    "weight": 400 }
+  }
+}

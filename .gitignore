@@ -1,0 +1,4 @@
+node_modules/
+scripts/.fonts-cache/
+*.log
+.DS_Store
