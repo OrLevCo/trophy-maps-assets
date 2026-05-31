@@ -24,18 +24,22 @@ Static SVG assets for Trophy Maps embeds and other Trophy consumers. Served via 
 
 ## Building logos
 
-Each building has its own folder under `building-logos/{slug}/` with two files:
+Each building has its own folder under `building-logos/{slug}/` with **four files** — a light/dark pair of rectangular + square lockups:
 
-- `wordmark.svg` - rectangular lockup, transparent background, used for the tooltip on hover
-- `wordmark-square.svg` - square 400×400 lockup with paper-color background fill, used for the 48×48 pin marker
+- `wordmark.svg` - rectangular, transparent bg, ink digits (for use on light surfaces)
+- `wordmark-square.svg` - square 400×400, paper bg + ink digits (light pin marker)
+- `wordmark-dark.svg` - rectangular, transparent bg, paper digits (for use on dark surfaces)
+- `wordmark-square-dark.svg` - square 400×400, ink bg + paper digits (dark pin marker)
+
+Pick rectangular files by the consumer's surface color (transparent files render against the surface behind them). Square files carry their own surface inside the file — pick by the desired mode.
 
 Slug convention: lowercase, no separators (e.g. `39w37`, `119w57`).
 
 **Spec, brand tokens, composition patterns, and the per-building flow live in the workspace canon:** `trophy-workspace/knowledge/project-delivery/assets/building-wordmarks.md`.
 
-### Generating a wordmark pair
+### Generating a wordmark set
 
-The generator outlines the building's wordmark from fonts (no live text) and writes both SVGs.
+The generator outlines the building's wordmark from fonts (no live text) and writes all four SVGs (light rect + light square + dark rect + dark square) in one run.
 
 ```bash
 cd scripts

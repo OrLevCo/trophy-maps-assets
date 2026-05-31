@@ -176,11 +176,15 @@ const rectH = Math.round(contentH + padY * 2);
 const globalDX = padX - contentMinX;
 const globalDY = padY - contentMinY;
 
-const rectSvg = `<svg width="${rectW}" height="${rectH}" viewBox="0 0 ${rectW} ${rectH}" fill="none" xmlns="http://www.w3.org/2000/svg">
+// Light variants paint glyphs in ink (against transparent / paper).
+// Dark variants paint glyphs in paper (against transparent / ink). The
+// accent stays the same in both modes — warm-gold-style accents read
+// well on both light and dark surfaces.
+const renderRect = (glyphColor) => `<svg width="${rectW}" height="${rectH}" viewBox="0 0 ${rectW} ${rectH}" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g${txAttr(globalDX, globalDY)}>
-<path${txAttr(leftDX, 0)} d="${left.d}" fill="${tokens.ink}"/>
+<path${txAttr(leftDX, 0)} d="${left.d}" fill="${glyphColor}"/>
 <path${txAttr(midDX, midDY)} d="${mid.d}" fill="${tokens.accent}"/>
-<path${txAttr(rightDX, 0)} d="${right.d}" fill="${tokens.ink}"/>
+<path${txAttr(rightDX, 0)} d="${right.d}" fill="${glyphColor}"/>
 </g>
 </svg>
 `;
@@ -195,21 +199,29 @@ const markH = contentH * scaleFit;
 const sqOffX = (SQ - markW) / 2 - contentMinX * scaleFit;
 const sqOffY = (SQ - markH) / 2 - contentMinY * scaleFit;
 
-const squareSvg = `<svg width="${SQ}" height="${SQ}" viewBox="0 0 ${SQ} ${SQ}" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="${SQ}" height="${SQ}" fill="${tokens.paper}"/>
+const renderSquare = (bgColor, glyphColor) => `<svg width="${SQ}" height="${SQ}" viewBox="0 0 ${SQ} ${SQ}" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="${SQ}" height="${SQ}" fill="${bgColor}"/>
 <g transform="translate(${sqOffX.toFixed(2)} ${sqOffY.toFixed(2)}) scale(${scaleFit.toFixed(4)})">
-<path${txAttr(leftDX, 0)} d="${left.d}" fill="${tokens.ink}"/>
+<path${txAttr(leftDX, 0)} d="${left.d}" fill="${glyphColor}"/>
 <path${txAttr(midDX, midDY)} d="${mid.d}" fill="${tokens.accent}"/>
-<path${txAttr(rightDX, 0)} d="${right.d}" fill="${tokens.ink}"/>
+<path${txAttr(rightDX, 0)} d="${right.d}" fill="${glyphColor}"/>
 </g>
 </svg>
 `;
 
 const outDir = path.join(REPO_ROOT, 'building-logos', config.slug);
 fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, 'wordmark.svg'), rectSvg);
-fs.writeFileSync(path.join(outDir, 'wordmark-square.svg'), squareSvg);
+
+const files = [
+  ['wordmark.svg',            renderRect(tokens.ink),                    `${rectW}×${rectH}`],
+  ['wordmark-square.svg',     renderSquare(tokens.paper, tokens.ink),    `${SQ}×${SQ}`],
+  ['wordmark-dark.svg',       renderRect(tokens.paper),                  `${rectW}×${rectH}`],
+  ['wordmark-square-dark.svg', renderSquare(tokens.ink, tokens.paper),   `${SQ}×${SQ}`],
+];
 
 console.log('Wrote:');
-console.log(' ', path.join(outDir, 'wordmark.svg'), `(${rectW}×${rectH})`);
-console.log(' ', path.join(outDir, 'wordmark-square.svg'), `(${SQ}×${SQ})`);
+for (const [name, content, dims] of files) {
+  const p = path.join(outDir, name);
+  fs.writeFileSync(p, content);
+  console.log(' ', p, `(${dims})`);
+}
